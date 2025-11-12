@@ -508,7 +508,17 @@
                         btnElement.textContent = btn.text;
                         btnElement.onclick = (e) => {
                             e.preventDefault();
-                            window.open(btn.url, '_blank');
+                            let url = btn.url;
+                            
+                            // Check if it's a Telegram bot link and convert it
+                            if (url.includes('t.me/') && url.includes('bot')) {
+                                // Convert t.me bot link to tg:// protocol
+                                const botUsername = url.split('t.me/')[1].split('?')[0];
+                                const params = url.includes('?') ? url.split('?')[1] : '';
+                                url = `tg://resolve?domain=${botUsername}${params ? '&' + params : ''}`;
+                            }
+                            
+                            window.open(url, '_blank');
                         };
                         rowDiv.appendChild(btnElement);
                     });
