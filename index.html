@@ -502,24 +502,16 @@
                     rowDiv.className = 'button-row';
                     
                     row.buttons.forEach((btn, index) => {
-                        const btnElement = document.createElement('button');
+                        const btnElement = document.createElement('a');
                         btnElement.className = 'preview-button';
-                        btnElement.type = 'button';
+                        btnElement.href = btn.url;
+                        btnElement.target = '_blank';
+                        btnElement.rel = 'noopener noreferrer';
                         btnElement.textContent = btn.text;
-                        btnElement.onclick = (e) => {
-                            e.preventDefault();
-                            let url = btn.url;
-                            
-                            // Check if it's a Telegram bot link and convert it
-                            if (url.includes('t.me/') && url.includes('bot')) {
-                                // Convert t.me bot link to tg:// protocol
-                                const botUsername = url.split('t.me/')[1].split('?')[0];
-                                const params = url.includes('?') ? url.split('?')[1] : '';
-                                url = `tg://resolve?domain=${botUsername}${params ? '&' + params : ''}`;
-                            }
-                            
-                            window.open(url, '_blank');
-                        };
+                        btnElement.style.textDecoration = 'none';
+                        btnElement.style.display = 'flex';
+                        btnElement.style.alignItems = 'center';
+                        btnElement.style.justifyContent = 'center';
                         rowDiv.appendChild(btnElement);
                     });
                     
