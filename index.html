@@ -508,7 +508,7 @@
                         btnElement.textContent = btn.text;
                         btnElement.onclick = (e) => {
                             e.preventDefault();
-                            alert(`Button URL: ${btn.url}`);
+                            window.open(btn.url, '_blank');
                         };
                         rowDiv.appendChild(btnElement);
                     });
