@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Bulk Message Sender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .result-item.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .result-item.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Telegram Bulk Message Sender</h1>
+            <p>একসাথে অনেক মানুষের কাছে মেসেজ পাঠান</p>
+        </div>
+
+        <div class="content">
+            <form id="messageForm">
+                <div class="form-group">
+                    <label for="botToken">🤖 Bot Token</label>
+                    <input type="text" id="botToken" value="8394249085:AAEKzmIUHqwNuUoJkZ2U5OQTZMtI3PGAWhc" required>
+                    <div class="hint">তোমার Telegram Bot এর Token</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="chatIds">👥 Chat IDs (একাধিক আইডির জন্য কমা দিয়ে আলাদা করো)</label>
+                    <textarea id="chatIds" placeholder="7559229828, 123456789, 987654321" required></textarea>
+                    <div class="hint">উদাহরণ: 7559229828, 123456789, 987654321</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">💬 Message</label>
+                    <textarea id="message" placeholder="তোমার মেসেজ এখানে লেখো..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="sendBtn">
+                    📤 Send Messages
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>মেসেজ পাঠানো হচ্ছে...</p>
+            </div>
+
+            <div class="results" id="results">
+                <h3 style="margin-bottom: 15px;">📊 Results:</h3>
+                <div class="stats" id="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="successCount" style="color: #28a745;">0</div>
+                        <div class="stat-label">Success</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="errorCount" style="color: #dc3545;">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                </div>
+                <div id="resultsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const botToken = document.getElementById('botToken').value.trim();
+            const chatIdsText = document.getElementById('chatIds').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            // Parse chat IDs
+            const chatIds = chatIdsText.split(',').map(id => id.trim()).filter(id => id);
+
+            if (chatIds.length === 0) {
+                alert('অন্তত একটি Chat ID দিতে হবে!');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('sendBtn').disabled = true;
+
+            // Results tracking
+            let successCount = 0;
+            let errorCount = 0;
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            // Send messages
+            for (let i = 0; i < chatIds.length; i++) {
+                const chatId = chatIds[i];
+                
+                try {
+                    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: message
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.ok) {
+                        successCount++;
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item success';
+                        resultItem.textContent = `✅ Chat ID ${chatId}: মেসেজ সফলভাবে পাঠানো হয়েছে`;
+                        resultsList.appendChild(resultItem);
+                    } else {
+                        errorCount++;
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item error';
+                        resultItem.textContent = `❌ Chat ID ${chatId}: ${data.description || 'মেসেজ পাঠাতে ব্যর্থ'}`;
+                        resultsList.appendChild(resultItem);
+                    }
+                } catch (error) {
+                    errorCount++;
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item error';
+                    resultItem.textContent = `❌ Chat ID ${chatId}: ${error.message}`;
+                    resultsList.appendChild(resultItem);
+                }
+
+                // Small delay to avoid rate limiting
+                if (i < chatIds.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+
+            // Update stats
+            document.getElementById('totalCount').textContent = chatIds.length;
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('errorCount').textContent = errorCount;
+
+            // Hide loading and show results
+            document.getElementById('loading').classList.remove('show');
+            document.getElementById('results').classList.add('show');
+            document.getElementById('sendBtn').disabled = false;
+        });
+    </script>
+</body>
+</html>
