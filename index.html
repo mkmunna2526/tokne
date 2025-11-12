@@ -271,6 +271,10 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .preview-button:last-child {
@@ -279,10 +283,15 @@
 
         .preview-button:hover {
             background: #34495e;
+            color: #ecf0f1;
         }
 
         .preview-button:active {
             background: #1a252f;
+        }
+
+        .preview-button:visited {
+            color: #ecf0f1;
         }
 
         .add-button-row {
@@ -386,11 +395,12 @@
 
             <div class="form-group">
                 <label>🔘 Add Buttons (Optional)</label>
-                <p class="help-text">Add inline buttons below your message</p>
+                <p class="help-text">Add inline buttons below your message. For bot links, use format: https://t.me/YourBotName or https://t.me/YourBot/appname</p>
                 
                 <div id="buttonPreview" class="button-preview" style="display: none;">
                     <strong>Button Preview:</strong>
                     <div id="buttonRows"></div>
+                    <p style="color: #666; font-size: 12px; margin-top: 10px;">💡 Tip: Bot links will open in Telegram app when clicked</p>
                 </div>
 
                 <div id="buttonInputs"></div>
